@@ -7,60 +7,198 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract StudentAchievements is ERC721, Ownable {
     using Counters for Counters.Counter;
-    
+
+    // New enum for submission status.
+    enum SubmissionStatus {
+        Waiting,
+        Approved,
+        Rejected
+    }
+
     struct Project {
+        uint256 projectId;
         string name;
         string description;
         address creator;
-        bool isActive;
+        address[] whitelist;
+        uint256 deadline;
+        address[] verfiers;
+        uint256 reward;
     }
-    
+
+    // Updated Submission struct using SubmissionStatus.
     struct Submission {
         address student;
-        uint projectId;
-        bool verified;
+        uint256 projectId;
+        SubmissionStatus status;
     }
-    
+
     Counters.Counter private _projectIds;
-    Counters.Counter private _tokenIds;
-    mapping(uint => Project) public projects;
-    mapping(uint => Submission) public submissions;
+    Counters.Counter private _submissionIds;
+
+    mapping(uint256 => Project) public projects;
+    mapping(uint256 => Submission) public submissions;
     mapping(address => bool) public isInstructor;
-    
-    event ProjectCreated(uint indexed projectId, string name, address creator);
-    event SubmissionMade(uint indexed submissionId, address student, uint projectId);
-    event SubmissionVerified(uint indexed submissionId, address instructor);
-    
+    mapping(address => uint256[]) public submissionsByUser;
+
+    event ProjectCreated(
+        uint256 indexed projectId,
+        string name,
+        address creator
+    );
+    event SubmissionMade(
+        uint256 indexed submissionId,
+        address indexed student,
+        uint256 projectId
+    );
+    // Updated event includes the new status.
+    event SubmissionStatusUpdated(
+        uint256 indexed submissionId,
+        address verifier,
+        SubmissionStatus status
+    );
+
     constructor() ERC721("StudentNFT", "SNFT") Ownable(msg.sender) {}
-    
+
     modifier onlyInstructor() {
         require(isInstructor[msg.sender], "Not an instructor");
         _;
     }
-    
+
     function addInstructor(address instructor) external onlyOwner {
         isInstructor[instructor] = true;
     }
-    
-    function createProject(string memory name, string memory description) external onlyInstructor {
+
+    function createProject(
+        string memory _name,
+        string memory _description,
+        address[] memory _whitelist,
+        uint256 _deadline,
+        address[] memory _verfiers,
+        uint256 _reward
+    ) external onlyInstructor returns (uint256) {
+        require(_deadline > block.timestamp, "Deadline must be in the future");
+
         _projectIds.increment();
-        uint projectId = _projectIds.current();
-        projects[projectId] = Project(name, description, msg.sender, true);
-        emit ProjectCreated(projectId, name, msg.sender);
+        uint256 newProjectId = _projectIds.current();
+
+        projects[newProjectId] = Project({
+            projectId: newProjectId,
+            name: _name,
+            description: _description,
+            creator: msg.sender,
+            whitelist: _whitelist,
+            deadline: _deadline,
+            verfiers: _verfiers,
+            reward: _reward
+        });
+
+        emit ProjectCreated(newProjectId, _name, msg.sender);
+
+        return newProjectId;
     }
-    
-    function submitWork(uint projectId) external {
-        require(projects[projectId].isActive, "Project not active");
-        _tokenIds.increment();
-        uint submissionId = _tokenIds.current();
-        submissions[submissionId] = Submission(msg.sender, projectId, false);
-        emit SubmissionMade(submissionId, msg.sender, projectId);
+
+    function submitAchievement(uint256 _projectId) external returns (uint256) {
+        require(
+            projects[_projectId].creator != address(0),
+            "Project does not exist"
+        );
+        require(
+            block.timestamp <= projects[_projectId].deadline,
+            "Project deadline passed"
+        );
+
+        // If a whitelist is provided, ensure the sender is allowed.
+        if (projects[_projectId].whitelist.length > 0) {
+            bool allowed = false;
+            for (
+                uint256 i = 0;
+                i < projects[_projectId].whitelist.length;
+                i++
+            ) {
+                if (projects[_projectId].whitelist[i] == msg.sender) {
+                    allowed = true;
+                    break;
+                }
+            }
+            require(allowed, "You are not whitelisted for this project");
+        }
+
+        _submissionIds.increment();
+        uint256 newSubmissionId = _submissionIds.current();
+
+        submissions[newSubmissionId] = Submission({
+            student: msg.sender,
+            projectId: _projectId,
+            status: SubmissionStatus.Waiting
+        });
+
+        // Record the submission ID for the student.
+        submissionsByUser[msg.sender].push(newSubmissionId);
+
+        emit SubmissionMade(newSubmissionId, msg.sender, _projectId);
+        return newSubmissionId;
     }
-    
-    function verifySubmission(uint submissionId) external onlyInstructor {
-        require(!submissions[submissionId].verified, "Already verified");
-        submissions[submissionId].verified = true;
-        _mint(submissions[submissionId].student, submissionId);
-        emit SubmissionVerified(submissionId, msg.sender);
+
+    // Updated verifySubmission accepts a boolean to determine approval or rejection.
+    function verifySubmission(uint256 _submissionId, bool approve) external {
+        Submission storage submission = submissions[_submissionId];
+        require(submission.student != address(0), "Submission does not exist");
+        require(
+            submission.status == SubmissionStatus.Waiting,
+            "Submission already processed"
+        );
+
+        Project storage project = projects[submission.projectId];
+
+        // Check if the caller is the project creator.
+        bool isAuthorized = (msg.sender == project.creator);
+
+        // Or check if the caller is in the project's verifiers list.
+        if (!isAuthorized) {
+            for (uint256 i = 0; i < project.verfiers.length; i++) {
+                if (project.verfiers[i] == msg.sender) {
+                    isAuthorized = true;
+                    break;
+                }
+            }
+        }
+        require(isAuthorized, "Not authorized to verify this submission");
+
+        if (approve) {
+            submission.status = SubmissionStatus.Approved;
+            // Optionally mint an NFT certificate for an approved submission.
+            _mint(submission.student, _submissionId);
+        } else {
+            submission.status = SubmissionStatus.Rejected;
+        }
+
+        emit SubmissionStatusUpdated(
+            _submissionId,
+            msg.sender,
+            submission.status
+        );
+    }
+
+    // New getter to retrieve the status of a submission.
+    function getSubmissionStatus(uint256 _submissionId)
+        external
+        view
+        returns (SubmissionStatus)
+    {
+        require(
+            submissions[_submissionId].student != address(0),
+            "Submission does not exist"
+        );
+        return submissions[_submissionId].status;
+    }
+
+    // Getter to retrieve all submission IDs for a specific user.
+    function getUserSubmissions(address _user)
+        external
+        view
+        returns (uint256[] memory)
+    {
+        return submissionsByUser[_user];
     }
 }
