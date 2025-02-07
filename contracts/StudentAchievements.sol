@@ -31,13 +31,17 @@ contract StudentAchievements is ERC721, Ownable {
         address student;
         uint256 projectId;
         SubmissionStatus status;
+        address verifier;
     }
 
     Counters.Counter private _projectIds;
     Counters.Counter private _submissionIds;
+    uint[] public projectIds;
 
     mapping(uint256 => Project) public projects;
     mapping(uint256 => Submission) public submissions;
+    mapping(address => uint[]) public studentSubmissions;
+
     mapping(address => bool) public isInstructor;
     mapping(address => uint256[]) public submissionsByUser;
 
@@ -130,7 +134,8 @@ contract StudentAchievements is ERC721, Ownable {
         submissions[newSubmissionId] = Submission({
             student: msg.sender,
             projectId: _projectId,
-            status: SubmissionStatus.Waiting
+            status: SubmissionStatus.Waiting,
+            verifier: address(0)
         });
 
         // Record the submission ID for the student.
@@ -164,7 +169,10 @@ contract StudentAchievements is ERC721, Ownable {
             }
         }
         require(isAuthorized, "Not authorized to verify this submission");
-
+        // If verifier was not set - setup
+        if (submission.verifier == address(0)) {
+            submission.verifier = msg.sender;
+        }
         if (approve) {
             submission.status = SubmissionStatus.Approved;
             // Optionally mint an NFT certificate for an approved submission.
@@ -201,4 +209,25 @@ contract StudentAchievements is ERC721, Ownable {
     {
         return submissionsByUser[_user];
     }
+
+    function getSubmissionDetails(uint256 _submissionId) external view returns (
+        address student,
+        uint256 projectId,
+        SubmissionStatus status,
+        string memory projectName,
+        string memory projectDescription
+) {
+    require(submissions[_submissionId].student != address(0), "Submission does not exist");
+
+    Submission memory submission = submissions[_submissionId];
+    Project memory project = projects[submission.projectId];
+
+    return (
+        submission.student,
+        submission.projectId,
+        submission.status,
+        project.name,
+        project.description
+    );
+}
 }
