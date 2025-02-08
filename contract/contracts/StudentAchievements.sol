@@ -24,7 +24,7 @@ contract StudentAchievements is ERC721, Ownable {
         uint256 deadline;
         address[] verifiers;
         uint256 reward;
-        uint256[] submissions;  // # todo add logic for adding submission to project
+        uint256[] submissions;  
     }
 
     // Updated Submission struct using SubmissionStatus.
@@ -39,13 +39,17 @@ contract StudentAchievements is ERC721, Ownable {
 
     Counters.Counter private _projectIds;
     Counters.Counter private _submissionIds;
-    uint[] public projectIds;
+    
+    uint256[] public projectIds;  // All projects list
+    function getAllProjects() external view returns (uint256[] memory) {
+        return projectIds;
+    }
 
     mapping(uint256 => Project) public projects;
     mapping(uint256 => Submission) public submissions;
     
-    mapping(address => uint256[]) public Verifiers;  // # todo add logic adding verifier in create project
-    mapping(address => uint256[]) public InstructorProjectIds;  // # todo add logic ...
+    mapping(address => uint256[]) public Verifiers;  
+    mapping(address => uint256[]) public InstructorProjectIds;  
     mapping(address => uint256[]) public submissionsByUser;
 
     mapping(address => bool) public isInstructor;

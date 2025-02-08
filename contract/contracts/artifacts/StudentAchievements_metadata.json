@@ -308,6 +308,54 @@
 				"inputs": [
 					{
 						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "InstructorProjectIds",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "Verifiers",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
 						"name": "instructor",
 						"type": "address"
 					}
@@ -378,7 +426,7 @@
 					},
 					{
 						"internalType": "address[]",
-						"name": "_verfiers",
+						"name": "_verifiers",
 						"type": "address[]"
 					},
 					{
@@ -399,6 +447,19 @@
 				"type": "function"
 			},
 			{
+				"inputs": [],
+				"name": "getAllProjects",
+				"outputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "",
+						"type": "uint256[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
 				"inputs": [
 					{
 						"internalType": "uint256",
@@ -412,6 +473,45 @@
 						"internalType": "address",
 						"name": "",
 						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_submissionId",
+						"type": "uint256"
+					}
+				],
+				"name": "getSubmissionDetails",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "student",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "projectId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "enum StudentAchievements.SubmissionStatus",
+						"name": "status",
+						"type": "uint8"
+					},
+					{
+						"internalType": "string",
+						"name": "projectName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "projectDescription",
+						"type": "string"
 					}
 				],
 				"stateMutability": "view",
@@ -538,6 +638,25 @@
 						"internalType": "address",
 						"name": "",
 						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "projectIds",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
 					}
 				],
 				"stateMutability": "view",
@@ -684,9 +803,24 @@
 						"type": "uint256"
 					},
 					{
+						"internalType": "string",
+						"name": "description",
+						"type": "string"
+					},
+					{
 						"internalType": "enum StudentAchievements.SubmissionStatus",
 						"name": "status",
 						"type": "uint8"
+					},
+					{
+						"internalType": "address",
+						"name": "verifier",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "verdict",
+						"type": "string"
 					}
 				],
 				"stateMutability": "view",
@@ -722,6 +856,11 @@
 						"internalType": "uint256",
 						"name": "_projectId",
 						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "_description",
+						"type": "string"
 					}
 				],
 				"name": "submitAchievement",
@@ -993,7 +1132,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"contracts/StudentAchievements.sol": "StudentAchievements"
+			"contract/contracts/StudentAchievements.sol": "StudentAchievements"
 		},
 		"evmVersion": "cancun",
 		"libraries": {},
@@ -1135,12 +1274,12 @@
 				"dweb:/ipfs/QmVUSvooZKEdEdap619tcJjTLcAuH6QBdZqAzWwnAXZAWJ"
 			]
 		},
-		"contracts/StudentAchievements.sol": {
-			"keccak256": "0x737795e1d0dce186a937602c3bee21a8cb3e7ae62b216f654cd503c0e9f84d38",
+		"contract/contracts/StudentAchievements.sol": {
+			"keccak256": "0x74d8545331da0d531544939c0644378c85a69c2d96916b7f0321ca5f9f3c519b",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://5b6eb68bd18995627994598664cc437bf85c44dc9a4af573466517b663c71470",
-				"dweb:/ipfs/QmZybmfWdJnYx4iwVMNkiUp6MYAXfAYHo7QGRrzJd3eEiT"
+				"bzz-raw://b1f83ab9f01740406d889b24c9b0f035e2702a20b32f9ffdd307f9bc07769a17",
+				"dweb:/ipfs/QmNWbBoM2rbDyAHkmWooWeZy5KpVWFY6q9wXzxmbhQYSGf"
 			]
 		}
 	},
