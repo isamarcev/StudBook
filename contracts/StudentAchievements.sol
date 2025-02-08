@@ -22,16 +22,19 @@ contract StudentAchievements is ERC721, Ownable {
         address creator;
         address[] whitelist;
         uint256 deadline;
-        address[] verfiers;
+        address[] verifiers;
         uint256 reward;
+        uint256[] submissions;  // # todo add logic for adding submission to project
     }
 
     // Updated Submission struct using SubmissionStatus.
     struct Submission {
         address student;
         uint256 projectId;
+        string description;
         SubmissionStatus status;
         address verifier;
+        string verdict;
     }
 
     Counters.Counter private _projectIds;
@@ -40,10 +43,12 @@ contract StudentAchievements is ERC721, Ownable {
 
     mapping(uint256 => Project) public projects;
     mapping(uint256 => Submission) public submissions;
-    mapping(address => uint[]) public studentSubmissions;
+    
+    mapping(address => uint256[]) public Verifiers;  // # todo add logic adding verifier in create project
+    mapping(address => uint256[]) public InstructorProjectIds;  // # todo add logic ...
+    mapping(address => uint256[]) public submissionsByUser;
 
     mapping(address => bool) public isInstructor;
-    mapping(address => uint256[]) public submissionsByUser;
 
     event ProjectCreated(
         uint256 indexed projectId,
@@ -78,7 +83,7 @@ contract StudentAchievements is ERC721, Ownable {
         string memory _description,
         address[] memory _whitelist,
         uint256 _deadline,
-        address[] memory _verfiers,
+        address[] memory _verifiers,
         uint256 _reward
     ) external onlyInstructor returns (uint256) {
         require(_deadline > block.timestamp, "Deadline must be in the future");
@@ -93,16 +98,25 @@ contract StudentAchievements is ERC721, Ownable {
             creator: msg.sender,
             whitelist: _whitelist,
             deadline: _deadline,
-            verfiers: _verfiers,
-            reward: _reward
+            verifiers: _verifiers,
+            reward: _reward,
+            submissions: new uint256[](0)
         });
+
+        // Добавляем `projectId` в список проектов инструктора
+        InstructorProjectIds[msg.sender].push(newProjectId);
+
+        // Добавляем `projectId` в список проектов для каждого верификатора
+        for (uint256 i = 0; i < _verifiers.length; i++) {
+            Verifiers[_verifiers[i]].push(newProjectId);
+        }
 
         emit ProjectCreated(newProjectId, _name, msg.sender);
 
         return newProjectId;
     }
 
-    function submitAchievement(uint256 _projectId) external returns (uint256) {
+    function submitAchievement(uint256 _projectId, string memory _description) external returns (uint256) {
         require(
             projects[_projectId].creator != address(0),
             "Project does not exist"
@@ -111,7 +125,11 @@ contract StudentAchievements is ERC721, Ownable {
             block.timestamp <= projects[_projectId].deadline,
             "Project deadline passed"
         );
-
+        // instructor can not create submission 
+        require(isInstructor[msg.sender], "Not an instructor");
+        
+        // check max length
+        require(bytes(_description).length <= 300, "Description too long");
         // If a whitelist is provided, ensure the sender is allowed.
         if (projects[_projectId].whitelist.length > 0) {
             bool allowed = false;
@@ -135,7 +153,9 @@ contract StudentAchievements is ERC721, Ownable {
             student: msg.sender,
             projectId: _projectId,
             status: SubmissionStatus.Waiting,
-            verifier: address(0)
+            verifier: address(0),
+            description: _description,
+            verdict: ""
         });
 
         // Record the submission ID for the student.
@@ -161,8 +181,8 @@ contract StudentAchievements is ERC721, Ownable {
 
         // Or check if the caller is in the project's verifiers list.
         if (!isAuthorized) {
-            for (uint256 i = 0; i < project.verfiers.length; i++) {
-                if (project.verfiers[i] == msg.sender) {
+            for (uint256 i = 0; i < project.verifiers.length; i++) {
+                if (project.verifiers[i] == msg.sender) {
                     isAuthorized = true;
                     break;
                 }
