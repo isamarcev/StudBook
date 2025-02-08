@@ -234,6 +234,38 @@ contract StudentAchievements is ERC721, Ownable {
         return submissionsByUser[_user];
     }
 
+    // getter for get all list submission by address
+    // Getter to retrieve all submission details by the project creator's address
+    function getSubmissionsByCreator(address _creator) external view returns (Submission[] memory) {
+    // Initialize an array to hold all submissions by the creator
+    uint256[] memory creatorProjectIds = InstructorProjectIds[_creator];
+    uint256 totalSubmissions = 0;
+
+    // Count the total number of submissions by the creator
+    for (uint256 i = 0; i < creatorProjectIds.length; i++) {
+        totalSubmissions += projects[creatorProjectIds[i]].submissions.length;
+    }
+
+    // Create an array to store all the submissions
+    Submission[] memory allSubmissions = new Submission[](totalSubmissions);
+    uint256 index = 0;
+
+    // Iterate over each project created by the instructor
+    for (uint256 i = 0; i < creatorProjectIds.length; i++) {
+        uint256 projectId = creatorProjectIds[i];
+        Project storage project = projects[projectId];
+        
+        // Iterate over all submissions in the project
+        for (uint256 j = 0; j < project.submissions.length; j++) {
+            uint256 submissionId = project.submissions[j];
+            allSubmissions[index] = submissions[submissionId];
+            index++;
+        }
+    }
+
+    return allSubmissions;
+}
+
     function getSubmissionDetails(uint256 _submissionId) external view returns (
         address student,
         uint256 projectId,

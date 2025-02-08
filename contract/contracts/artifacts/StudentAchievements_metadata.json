@@ -540,6 +540,57 @@
 				"inputs": [
 					{
 						"internalType": "address",
+						"name": "_creator",
+						"type": "address"
+					}
+				],
+				"name": "getSubmissionsByCreator",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "address",
+								"name": "student",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "projectId",
+								"type": "uint256"
+							},
+							{
+								"internalType": "string",
+								"name": "description",
+								"type": "string"
+							},
+							{
+								"internalType": "enum StudentAchievements.SubmissionStatus",
+								"name": "status",
+								"type": "uint8"
+							},
+							{
+								"internalType": "address",
+								"name": "verifier",
+								"type": "address"
+							},
+							{
+								"internalType": "string",
+								"name": "verdict",
+								"type": "string"
+							}
+						],
+						"internalType": "struct StudentAchievements.Submission[]",
+						"name": "",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
 						"name": "_user",
 						"type": "address"
 					}
@@ -1275,11 +1326,11 @@
 			]
 		},
 		"contract/contracts/StudentAchievements.sol": {
-			"keccak256": "0x74d8545331da0d531544939c0644378c85a69c2d96916b7f0321ca5f9f3c519b",
+			"keccak256": "0x6d6cc7bffc2a90439c5bbd7cd637ba1360466249826954160089358d243ebab8",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://b1f83ab9f01740406d889b24c9b0f035e2702a20b32f9ffdd307f9bc07769a17",
-				"dweb:/ipfs/QmNWbBoM2rbDyAHkmWooWeZy5KpVWFY6q9wXzxmbhQYSGf"
+				"bzz-raw://8353acbfc93de938c30983e1f53ec6d2da42311f634a956d20e9c426ca519fb7",
+				"dweb:/ipfs/QmW2McKG6MNsLeyyxuLBNgSFoVbzFFTWtSdLbidoC9EEvD"
 			]
 		}
 	},
