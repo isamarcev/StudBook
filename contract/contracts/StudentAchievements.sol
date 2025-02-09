@@ -106,6 +106,7 @@ contract StudentAchievements is Ownable {
         });
 
         instructorProjectIds[msg.sender].push(newProjectId);
+        projectIds.push(newProjectId);
 
         for (uint256 i = 0; i < _verifiers.length; i++) {
             verifiers[_verifiers[i]].push(newProjectId);
