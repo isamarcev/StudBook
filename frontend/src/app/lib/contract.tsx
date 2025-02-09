@@ -1,76 +1,109 @@
-import { ethers } from 'ethers';
-import fs from 'fs';
-import path from 'path';
+import { ethers } from "ethers";
+import fs from "fs";
+import path from "path";
 
-// Define the contract address
-const contractAddress: string = process.env.CHAIN_PUBLIC_CONTRACT_ADDRESS || '0x';
-// Set up the provider (here we use a default provider, but you could use a specific one like Infura, Alchemy, etc.)
+// Define the contract address from the environment (fallback to a dummy value)
+const contractAddress: string =
+  process.env.CHAIN_PUBLIC_CONTRACT_ADDRESS || "0x";
+// Set up the provider (you can replace with Infura, Alchemy, etc. if desired)
 const provider = new ethers.JsonRpcProvider(process.env.CHAIN_RPC_URL);
 
-// Read the ABI from the file
-const abiPath = path.resolve(__dirname, '../../../abi/chain_contract.json');
-const contractABI = JSON.parse(fs.readFileSync(abiPath, 'utf8'));
+// Read the ABI from the file (ensure this ABI is updated for your current contract)
+const abiPath = path.resolve(__dirname, "../../../abi/chain_contract.json");
+const contractABI = JSON.parse(fs.readFileSync(abiPath, "utf8"));
 
-
-// Create contract instance
+// Create a contract instance using the provider
 const contract = new ethers.Contract(contractAddress, contractABI, provider);
 
-// TypeScript types for SubmissionStatus
+// TypeScript enum for SubmissionStatus matching the contract
 enum SubmissionStatus {
-    Waiting = 0,
-    Approved,
-    Rejected
+  Waiting = 0,
+  Approved,
+  Rejected,
 }
 
-// 1. Function to get the status of a submission
-async function getSubmissionStatus(submissionId: number): Promise<SubmissionStatus> {
-    try {
-        const status: SubmissionStatus = await contract.getSubmissionStatus(submissionId);
-        return status;
-    } catch (error) {
-        console.error('Error getting submission status:', error);
-        throw new Error('Failed to get submission status');
-    }
+/**
+ * 1. Get a single submission's details using the public `submissions` mapping.
+ *    (Note: This is automatically available from the public mapping.)
+ */
+async function getSubmission(submissionId: number): Promise<any> {
+  try {
+    const submission = await contract.submissions(submissionId);
+    return submission;
+  } catch (error) {
+    console.error("Error getting submission:", error);
+    throw new Error("Failed to get submission");
+  }
 }
 
-// 2. Function to get all submission IDs for a specific user
-async function getUserSubmissions(userAddress: string): Promise<number[]> {
-    try {
-        const submissionIds: number[] = await contract.getUserSubmissions(userAddress);
-        return submissionIds;
-    } catch (error) {
-        console.error('Error getting user submissions:', error);
-        throw new Error('Failed to get user submissions');
-    }
+/**
+ * 2. Get all submissions for the connected user.
+ *    This calls the contract function `getUserSubmissions()`.
+ */
+async function getUserSubmissions(): Promise<any[]> {
+  try {
+    const userSubmissions = await contract.getUserSubmissions();
+    return userSubmissions;
+  } catch (error) {
+    console.error("Error getting user submissions:", error);
+    throw new Error("Failed to get user submissions");
+  }
 }
 
-// 3. Function to get all submissions by a project creator (instructor)
-async function getSubmissionsByCreator(creatorAddress: string): Promise<any[]> {
-    try {
-        const submissions = await contract.getSubmissionsByCreator(creatorAddress);
-        return submissions;
-    } catch (error) {
-        console.error('Error getting submissions by creator:', error);
-        throw new Error('Failed to get submissions by creator');
-    }
+/**
+ * 3. Get all projects for the instructor.
+ *    This calls the contract function `getInstructorProjects()`.
+ *    (Requires the caller to be marked as an instructor.)
+ */
+async function getInstructorProjects(): Promise<any[]> {
+  try {
+    const instructorProjects = await contract.getInstructorProjects();
+    return instructorProjects;
+  } catch (error) {
+    console.error("Error getting instructor projects:", error);
+    throw new Error("Failed to get instructor projects");
+  }
 }
 
-// Example usage:
-(async () => {
-    const submissionId = 1;
-    const userAddress = '0x123';  // Replace with a valid user address
-    const creatorAddress = '0x0f1CAc64Db1f1C5eAa7076c1cc931c726Bb54c4F';  // Replace with a valid creator address
+/**
+ * 4. Get all submissions for a specific project.
+ *    This calls the contract function `getProjectSubmissions(uint256)`.
+ *    (Requires the caller to be an instructor.)
+ */
+async function getProjectSubmissions(projectId: number): Promise<any[]> {
+  try {
+    const projectSubs = await contract.getProjectSubmissions(projectId);
+    return projectSubs;
+  } catch (error) {
+    console.error("Error getting project submissions:", error);
+    throw new Error("Failed to get project submissions");
+  }
+}
 
-    try {
-        const status = await getSubmissionStatus(submissionId);
-        console.log('Submission Status:', status);
+/**
+ * 5. Get all available projects for the student (or caller).
+ *    This calls the contract function `getAvailableProjects()`.
+ */
+async function getAvailableProjects(): Promise<any[]> {
+  try {
+    const availableProjects = await contract.getAvailableProjects();
+    return availableProjects;
+  } catch (error) {
+    console.error("Error getting available projects:", error);
+    throw new Error("Failed to get available projects");
+  }
+}
 
-        const userSubmissions = await getUserSubmissions(userAddress);
-        console.log('User Submissions:', userSubmissions);
-
-        const submissionsByCreator = await getSubmissionsByCreator(creatorAddress);
-        console.log('Submissions by Creator:', submissionsByCreator);
-    } catch (error) {
-        console.error(error);
-    }
-})();
+/**
+ * 6. Get all project IDs.
+ *    This calls the contract function `getAllProjects()`.
+ */
+async function getAllProjects(): Promise<number[]> {
+  try {
+    const allProjects: number[] = await contract.getAllProjects();
+    return allProjects;
+  } catch (error) {
+    console.error("Error getting all projects:", error);
+    throw new Error("Failed to get all projects");
+  }
+}
