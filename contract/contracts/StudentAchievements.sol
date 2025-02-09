@@ -39,6 +39,7 @@ contract StudentAchievements is Ownable {
     Counters.Counter private _submissionIds;
 
     uint256[] public projectIds; // All projects list
+
     function getAllProjects() external view returns (uint256[] memory) {
         return projectIds;
     }
@@ -68,7 +69,7 @@ contract StudentAchievements is Ownable {
         SubmissionStatus status
     );
 
-    constructor() ERC721("StudentNFT", "SNFT") Ownable(msg.sender) {}
+    constructor() Ownable(msg.sender) {}
 
     modifier onlyInstructor() {
         require(isInstructor[msg.sender], "Not an instructor");
@@ -209,11 +210,9 @@ contract StudentAchievements is Ownable {
         );
     }
 
-    // Getter to retrieve all submission IDs for a specific user.
-    function getUserSubmissions(
-        address _user
-    ) external view returns (Submission[] memory) {
-        uint256[] memory userSubmissionIds = submissionsByUser[_user];
+    // Getter to retrieve all submissions for a specific user.
+    function getUserSubmissions() external view returns (Submission[] memory) {
+        uint256[] memory userSubmissionIds = submissionsByUser[msg.sender];
         Submission[] memory userSubmissions = new Submission[](
             userSubmissionIds.length
         );
@@ -221,11 +220,99 @@ contract StudentAchievements is Ownable {
         for (uint256 index = 0; index < userSubmissionIds.length; index++) {
             uint256 submissionId = userSubmissionIds[index];
             Submission storage submission = submissions[submissionId];
-            if (submission.student == _user) {
-                userSubmissions.push(submission);
+            if (submission.student == msg.sender) {
+                userSubmissions[index] = submission;
             }
         }
 
         return userSubmissions;
+    }
+
+    function getInstructorProjects()
+        external
+        view
+        onlyInstructor
+        returns (Project[] memory)
+    {
+        uint256[] memory _instructorProjectIds = instructorProjectIds[
+            msg.sender
+        ];
+        Project[] memory instructorProjects = new Project[](
+            _instructorProjectIds.length
+        );
+
+        for (uint256 index = 0; index < _instructorProjectIds.length; index++) {
+            uint256 projectId = _instructorProjectIds[index];
+            Project storage project = projects[projectId];
+            if (project.creator == msg.sender) {
+                instructorProjects[index] = project;
+            }
+        }
+
+        return instructorProjects;
+    }
+
+    function getProjectSubmissions(
+        uint256 _projectId
+    ) external view onlyInstructor returns (Submission[] memory) {
+        uint256[] memory projectSubmissionIds = projects[_projectId]
+            .submissions;
+        Submission[] memory projectSubmissions = new Submission[](
+            projectSubmissionIds.length
+        );
+
+        for (uint256 index = 0; index < projectSubmissionIds.length; index++) {
+            uint256 submissionId = projectSubmissionIds[index];
+            Submission storage submission = submissions[submissionId];
+            if (submission.projectId == _projectId) {
+                projectSubmissions[index] = submission;
+            }
+        }
+
+        return projectSubmissions;
+    }
+
+    /// @notice Returns all projects available for the student calling this function.
+    /// A project is available if its whitelist is empty or if the caller's address is in the whitelist.
+    function getAvailableProjects() external view returns (Project[] memory) {
+        uint256 count = 0;
+        // First, count how many projects satisfy the criteria.
+        for (uint256 i = 0; i < projectIds.length; i++) {
+            Project storage project = projects[projectIds[i]];
+            if (
+                project.whitelist.length == 0 ||
+                _isInWhitelist(project.whitelist, msg.sender)
+            ) {
+                count++;
+            }
+        }
+
+        // Allocate an array of the appropriate size.
+        Project[] memory availableProjects = new Project[](count);
+        uint256 index = 0;
+        for (uint256 i = 0; i < projectIds.length; i++) {
+            Project storage project = projects[projectIds[i]];
+            if (
+                project.whitelist.length == 0 ||
+                _isInWhitelist(project.whitelist, msg.sender)
+            ) {
+                availableProjects[index] = project;
+                index++;
+            }
+        }
+        return availableProjects;
+    }
+
+    /// @dev Internal helper to check if an address is in a given whitelist.
+    function _isInWhitelist(
+        address[] storage whitelist,
+        address student
+    ) internal view returns (bool) {
+        for (uint256 i = 0; i < whitelist.length; i++) {
+            if (whitelist[i] == student) {
+                return true;
+            }
+        }
+        return false;
     }
 }
