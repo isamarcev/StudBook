@@ -17,19 +17,6 @@ const isInstructor = true;
 const ProjectsPage: FC = () => {
   const { walletAddress, connectWallet } = useWallet();
 
-  return (
-    <div>
-      <h1>Projects</h1>
-      <div>
-        {projects.map((project) => (
-          <Project key={project.id} id={project.id} name={project.name} />
-        ))}
-      </div>
-    </div>
-  );
-};
-
-
     return (
         <Page>
             <div className='flex flex-col gap-4 '>
