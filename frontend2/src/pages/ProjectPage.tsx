@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, use, useEffect, useState } from 'react'
 import { useWallet } from '../hooks/useWallet';
 import Project from '../components/Project';
 import BottomButton from '../components/BottomButtom';
@@ -6,6 +6,7 @@ import Header from '../components/Header';
 import Page from '../Page';
 import { useParams } from 'react-router-dom';
 import Submission from '../components/Submission';
+import { checkIfInstructor } from '../controllers/contract';
 
 const projects = [
     {id: 1, name: "TEST"},
@@ -21,12 +22,24 @@ const submissions = [
     {student: 4, description: "TEST4"},
 ]
 
-const isInstructor = true;
+// const isInstructor = true;
 
 const ProjectPage: FC = () => {
     
     const { walletAddress, connectWallet } = useWallet();
     const { id } = useParams();
+
+    const [isInstructor, setIsInstructor] = useState<boolean>(false);
+    const [submissions, setSubmissions] = useState<any[]>([]);
+
+    useEffect(() => {
+        if(walletAddress) {
+            checkIfInstructor(walletAddress).then(result => {
+                setIsInstructor(result);
+                console.log("isInstructor", result);
+            })
+        }
+    }, [walletAddress])
 
     const project = projects.find(project => project.id === Number(id));
 
