@@ -233,14 +233,14 @@ contract StudentAchievements is Ownable {
         return userSubmissions;
     }
 
-    function getInstructorProjects()
+    function getInstructorProjects(address _instructor)
         external
         view
         onlyInstructor
         returns (Project[] memory)
     {
         uint256[] memory _instructorProjectIds = instructorProjectIds[
-            msg.sender
+            _instructor
         ];
         Project[] memory instructorProjects = new Project[](
             _instructorProjectIds.length
@@ -249,7 +249,7 @@ contract StudentAchievements is Ownable {
         for (uint256 index = 0; index < _instructorProjectIds.length; index++) {
             uint256 projectId = _instructorProjectIds[index];
             Project storage project = projects[projectId];
-            if (project.creator == msg.sender) {
+            if (project.creator == _instructor) {
                 instructorProjects[index] = project;
             }
         }
@@ -279,14 +279,16 @@ contract StudentAchievements is Ownable {
 
     /// @notice Returns all projects available for the student calling this function.
     /// A project is available if its whitelist is empty or if the caller's address is in the whitelist.
-    function getAvailableProjects() external view returns (Project[] memory) {
+    function getAvailableProjects(
+        address student
+    ) external view returns (Project[] memory) {
         uint256 count = 0;
         // First, count how many projects satisfy the criteria.
         for (uint256 i = 0; i < projectIds.length; i++) {
             Project storage project = projects[projectIds[i]];
             if (
                 project.whitelist.length == 0 ||
-                _isInWhitelist(project.whitelist, msg.sender)
+                _isInWhitelist(project.whitelist, student)
             ) {
                 count++;
             }
@@ -299,7 +301,7 @@ contract StudentAchievements is Ownable {
             Project storage project = projects[projectIds[i]];
             if (
                 project.whitelist.length == 0 ||
-                _isInWhitelist(project.whitelist, msg.sender)
+                _isInWhitelist(project.whitelist, student)
             ) {
                 availableProjects[index] = project;
                 index++;
