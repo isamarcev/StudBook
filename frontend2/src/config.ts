@@ -1,12 +1,9 @@
-import dotenv from "dotenv";
-import path from "path";
-
-// Загружаем `.env` (поднимаемся из `src/` к корню проекта)
-dotenv.config({ path: path.resolve(__dirname, "../.env") });
+import contractAbi from "../abi/chain_contract.json";
 
 export const config = {
-  rpcUrl: process.env.CHAIN_RPC_URL || "https://rpc-mumbai.maticvigil.com",
-  contractAddress: process.env.CHAIN_PUBLIC_CONTRACT_ADDRESS || "0x",
+  rpcUrl: "https://sepolia.infura.io/v3/c08f6f09d0d0498fb3b5cd74a36eec15",
+  contractAddress: "0xC769008d3c3E63dcaf373884331c9f365878C1b4",
+  contractAbi: contractAbi,
 };
 
 console.log("Loaded Config:", config);

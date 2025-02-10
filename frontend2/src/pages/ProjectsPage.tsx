@@ -6,18 +6,28 @@ import Header from '../components/Header';
 import Page from '../Page';
 
 const projects = [
-    {id: 1, name: "TEST"},
-    {id: 2, name: "TEST2"},
-    {id: 3, name: "TEST3"},
-    {id: 4, name: "TEST4"},
-]
+  { id: 1, name: "TEST" },
+  { id: 2, name: "TEST2" },
+  { id: 3, name: "TEST3" },
+  { id: 4, name: "TEST4" },
+];
 
 const isInstructor = true;
 
 const ProjectsPage: FC = () => {
-    
-    const { walletAddress, connectWallet } = useWallet();
+  const { walletAddress, connectWallet } = useWallet();
 
+  return (
+    <div>
+      <h1>Projects</h1>
+      <div>
+        {projects.map((project) => (
+          <Project key={project.id} id={project.id} name={project.name} />
+        ))}
+      </div>
+    </div>
+  );
+};
 
 
     return (
