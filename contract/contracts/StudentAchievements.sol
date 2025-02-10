@@ -216,8 +216,10 @@ contract StudentAchievements is Ownable {
     }
 
     // Getter to retrieve all submissions for a specific user.
-    function getUserSubmissions() external view returns (Submission[] memory) {
-        uint256[] memory userSubmissionIds = submissionsByUser[msg.sender];
+    function getUserSubmissions(
+        address _user
+    ) external view returns (Submission[] memory) {
+        uint256[] memory userSubmissionIds = submissionsByUser[_user];
         Submission[] memory userSubmissions = new Submission[](
             userSubmissionIds.length
         );
@@ -225,7 +227,7 @@ contract StudentAchievements is Ownable {
         for (uint256 index = 0; index < userSubmissionIds.length; index++) {
             uint256 submissionId = userSubmissionIds[index];
             Submission storage submission = submissions[submissionId];
-            if (submission.student == msg.sender) {
+            if (submission.student == _user) {
                 userSubmissions[index] = submission;
             }
         }
