@@ -1,7 +1,6 @@
 import { ethers } from "ethers";
 import fs from "fs";
 import path from "path";
-import dotenv from "dotenv";
 
 import { config } from "../../config"; // Импортируем конфиг
 
@@ -133,24 +132,3 @@ export {
     checkIfInstructor,
     SubmissionStatus,
 };
-
-
-// 🔥 **Тестовая функция**
-(async () => {
-    try {
-        const submissionId = 1;
-        const userAddress = "0x0f1CAc64Db1f1C5eAa7076c1cc931c726Bb54c4F"; // Заменить на реальный адрес
-
-        console.log("🔹 Получаем все проекты...");
-        console.log(await getAllProjects());
-
-        console.log("🔹 Получаем все заявки пользователя...");
-        console.log(await getUserSubmissions(userAddress));
-
-        console.log("🔹 Получаем статус заявки...");
-        const status = await getSubmissionStatus(submissionId);
-        console.log("Submission Status:", SubmissionStatus[status]);
-    } catch (error) {
-        console.error("❌ Ошибка при выполнении тестов:", error);
-    }
-})();
