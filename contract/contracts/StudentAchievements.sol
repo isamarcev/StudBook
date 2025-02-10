@@ -168,11 +168,13 @@ contract StudentAchievements is Ownable {
         // Record the submission ID for the student.
         submissionsByUser[msg.sender].push(newSubmissionId);
 
+        // add to project
+        projects[_projectId].submissions.push(newSubmissionId);
         emit SubmissionMade(newSubmissionId, msg.sender, _projectId);
         return newSubmissionId;
     }
 
-    function verifySubmission(uint256 _submissionId, bool approve) external {
+    function verifySubmission(uint256 _submissionId, bool approve, string memory _verdict) external {
         Submission storage submission = submissions[_submissionId];
         require(submission.student != address(0), "Submission does not exist");
         require(
@@ -203,6 +205,8 @@ contract StudentAchievements is Ownable {
         } else {
             submission.status = SubmissionStatus.Rejected;
         }
+        // Add to verdict
+        submission.verdict = _verdict;
 
         emit SubmissionStatusUpdated(
             _submissionId,
