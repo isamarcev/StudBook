@@ -5,12 +5,20 @@ import BottomButton from '../components/BottomButtom';
 import Header from '../components/Header';
 import Page from '../Page';
 import { useParams } from 'react-router-dom';
+import Submission from '../components/Submission';
 
 const projects = [
     {id: 1, name: "TEST"},
     {id: 2, name: "TEST2"},
     {id: 3, name: "TEST3"},
     {id: 4, name: "TEST4"},
+]
+
+const submissions = [
+    {student: 1, description: "TEST", status: "approved"},
+    {student: 2, description: "TEST2", status: "rejected"},
+    {student: 3, description: "TEST3"},
+    {student: 4, description: "TEST4"},
 ]
 
 const isInstructor = true;
@@ -24,16 +32,20 @@ const ProjectPage: FC = () => {
 
     return (
         <Page>
-            <div className='flex flex-col gap-4 '>
+            <div className='flex flex-col gap-4 text-start'>
                 <Header isInstructor={isInstructor}/>
-                <h1>{project?.name}</h1>
-                <div className="flex flex-col gap-4">
-                    {projects.map(project => (
-                        <Project key={project.id} id={project.id} name={project.name} isInstructor={isInstructor}/>
+                <div className="flex flex-col bg-[#141519] p-4 gap-4 rounded-2xl min-w-[350px]">
+                    <h2>ID: <b>{project?.id}</b></h2>
+                    <h2>Назва проекту: <b>{project?.name}</b></h2>
+                </div>
+                <h2 className="text-2xl">Список заявок по проекту:</h2>
+                <div className="flex flex-col gap-4 p-2">
+                    {submissions.map(submission => (
+                        <Submission key={submission.student} student={submission.student} description={submission.description} status={submission.status || ""}/>
                     ))}
+                
                 </div>
 
-                {isInstructor ? <BottomButton title='Створити проект' onClick={() => {}}/> : null}
             </div>
         </Page>
     )

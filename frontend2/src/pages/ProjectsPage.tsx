@@ -4,6 +4,7 @@ import Project from '../components/Project';
 import BottomButton from '../components/BottomButtom';
 import Header from '../components/Header';
 import Page from '../Page';
+import { useNavigate } from 'react-router-dom';
 
 const projects = [
   { id: 1, name: "TEST" },
@@ -16,6 +17,7 @@ const isInstructor = true;
 
 const ProjectsPage: FC = () => {
   const { walletAddress, connectWallet } = useWallet();
+  const navigate = useNavigate();
 
     return (
         <Page>
@@ -24,7 +26,7 @@ const ProjectsPage: FC = () => {
                 <h1>Projects</h1>
                 <div className="flex flex-col gap-4">
                     {projects.map(project => (
-                        <Project key={project.id} id={project.id} name={project.name} isInstructor={isInstructor}/>
+                        <Project key={project.id} id={project.id} name={project.name} isInstructor={isInstructor} onClick={() => {navigate(`/project/${project.id}`)}}/>
                     ))}
                 </div>
 
