@@ -57,11 +57,26 @@ async function getAllProjects(): Promise<number[]> {
   }
 }
 
+
+
+
 // 🔹 4. Получить проект по `projectId`
 async function getProject(projectId: number): Promise<any> {
   try {
     const project = await contract.projects(projectId);
     return project;
+  } catch (error) {
+    console.error("Error getting project:", error);
+    throw new Error("Failed to get project");
+  }
+}
+
+
+// 🔹 4. Получить проект по `projectId`
+async function getAvailableProjects(student: string): Promise<any> {
+  try {
+    const projects = await contract.getAvailableProjects(student);
+    return projects;
   } catch (error) {
     console.error("Error getting project:", error);
     throw new Error("Failed to get project");
@@ -86,7 +101,7 @@ async function getInstructorProjects(
   instructorAddress: string
 ): Promise<number[]> {
   try {
-    const projects: number[] = await contract.instructorProjectIds(
+    const projects: number[] = await contract.getInstructorProjects(
       instructorAddress
     );
     return projects;
@@ -141,4 +156,5 @@ export {
   getSubmission,
   checkIfInstructor,
   SubmissionStatus,
+    getAvailableProjects,
 };
