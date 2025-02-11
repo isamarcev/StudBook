@@ -19,7 +19,7 @@ enum SubmissionStatus {
 }
 
 // 🔹 Структура проекта (Project)
-interface Project {
+export interface Project {
   projectId: number;
   name: string;
   description: string;
@@ -39,9 +39,13 @@ interface Submission {
 }
 
 // 🔹 1. Получить статус заявки по `submissionId`
-async function getSubmissionStatus(submissionId: number): Promise<SubmissionStatus> {
+async function getSubmissionStatus(
+  submissionId: number
+): Promise<SubmissionStatus> {
   try {
-    const status: SubmissionStatus = await contract.getSubmissionStatus(submissionId);
+    const status: SubmissionStatus = await contract.getSubmissionStatus(
+      submissionId
+    );
     return status;
   } catch (error) {
     console.error("Error getting submission status:", error);
@@ -52,7 +56,9 @@ async function getSubmissionStatus(submissionId: number): Promise<SubmissionStat
 // 🔹 2. Получить все `submissionId` пользователя
 async function getUserSubmissions(userAddress: string): Promise<number[]> {
   try {
-    const submissionIds: number[] = await contract.getUserSubmissions(userAddress);
+    const submissionIds: number[] = await contract.getUserSubmissions(
+      userAddress
+    );
     return submissionIds;
   } catch (error) {
     console.error("Error getting user submissions:", error);
@@ -114,7 +120,9 @@ async function getAvailableProjects(student: string): Promise<Project[]> {
 // 🔹 6. Получить все заявки для конкретного проекта
 async function getProjectSubmissions(projectId: number): Promise<number[]> {
   try {
-    const submissions: number[] = await contract.getProjectSubmissions(projectId);
+    const submissions: number[] = await contract.getProjectSubmissions(
+      projectId
+    );
     return submissions;
   } catch (error) {
     console.error("Error getting project submissions:", error);
@@ -123,9 +131,13 @@ async function getProjectSubmissions(projectId: number): Promise<number[]> {
 }
 
 // 🔹 7. Получить все проекты, созданные конкретным инструктором
-async function getInstructorProjects(instructorAddress: string): Promise<number[]> {
+async function getInstructorProjects(
+  instructorAddress: string
+): Promise<number[]> {
   try {
-    const projects: number[] = await contract.getInstructorProjects(instructorAddress);
+    const projects: number[] = await contract.getInstructorProjects(
+      instructorAddress
+    );
     return projects;
   } catch (error) {
     console.error("Error getting instructor projects:", error);
@@ -187,57 +199,3 @@ export {
   checkIfInstructor,
   SubmissionStatus,
 };
-
-(async () => {
-  try {
-    // const userAddress = "0x123456789abcdef"; //
-    const instructorAddress = "0xD332Cd49450a2c40ACc87F4AF944431A9967F076"; //
-    // const projectId = 1;
-    // const submissionId = 1;
-
-    console.log("🔹 Получаем все проекты...");
-    const allProjects = await getAllProjects();
-    console.log("📦 Все проекты:", allProjects);
-
-    console.log("🔹 Получаем данные о проекте...");
-    const project = await getProject(allProjects[0]);
-    console.log("📦 Данные проекта:", project);
-
-    console.log("🔹 Проверяем, является ли пользователь инструктором...");
-    const isInstructor = await checkIfInstructor(instructorAddress);
-    console.log(`📚 Является ли ${instructorAddress} инструктором?`, isInstructor);
-
-    // TODO did not tested
-    // console.log("🔹 Получаем доступные проекты для студента...");
-    // const availableProjects = await getAvailableProjects(userAddress);
-    // console.log("📦 Доступные проекты:", availableProjects);
-    //
-    // console.log("🔹 Получаем все заявки пользователя...");
-    // const userSubmissions = await getUserSubmissions(userAddress);
-    // console.log("📦 Заявки пользователя:", userSubmissions);
-    //
-    // console.log("🔹 Получаем заявки по проекту...");
-    // const projectSubmissions = await getProjectSubmissions(projectId);
-    // console.log("📦 Заявки в проекте:", projectSubmissions);
-    //
-    // console.log("🔹 Получаем данные о конкретной заявке...");
-    // const submission = await getSubmission(submissionId);
-    // console.log("📦 Данные заявки:", submission);
-    //
-    // console.log("🔹 Получаем статус заявки...");
-    // const status = await getSubmissionStatus(submissionId);
-    // console.log("📦 Статус заявки:", SubmissionStatus[status]);
-    //
-    // console.log("🔹 Получаем проекты инструктора...");
-    // const instructorProjects = await getInstructorProjects(instructorAddress);
-    // console.log("📦 Проекты инструктора:", instructorProjects);
-    //
-    // console.log("🔹 Получаем проекты верификатора...");
-    // const verifierProjects = await getVerifierProjects(userAddress);
-    // console.log("📦 Проекты верификатора:", verifierProjects);
-    //
-    // console.log("✅ Все тесты выполнены успешно!");
-  } catch (error) {
-    console.error("❌ Ошибка при выполнении тестов:", error);
-  }
-})();
