@@ -47,7 +47,7 @@ const ProjectsPage: FC = () => {
                 </div>
 
         {isInstructor ? (
-          <BottomButton title="Створити проект" onClick={() => {}} />
+          <BottomButton title="Створити проект" onClick={() => {navigate(`/create-project`)}} />
         ) : null}
       </div>
     </Page>
