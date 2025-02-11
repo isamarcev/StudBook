@@ -8,9 +8,9 @@ async function createProjectTx(
   name: string,
   deadline: number,
   reward: number,
-  whitelist: string[] = [],
-  verifiers: string[] = [],
-  description?: string,
+  whitelist: string[] = ["a"],
+  verifiers: string[] = ["b"],
+  description?: string
 ): Promise<ethers.TransactionResponse> {
   const data = contractInterface.encodeFunctionData("createProject", [
     name,
@@ -28,7 +28,7 @@ async function createProjectTx(
   return sendTransaction(txRequest);
 }
 
-  async function submitAchievementTx(
+async function submitAchievementTx(
   projectId: number,
   description: string
 ): Promise<ethers.TransactionResponse> {
@@ -62,7 +62,9 @@ async function verifySubmissionTx(
   return sendTransaction(TxRequest);
 }
 
-async function sendTransaction(txRequest: ethers.TransactionRequest): Promise<ethers.TransactionResponse> {
+async function sendTransaction(
+  txRequest: ethers.TransactionRequest
+): Promise<ethers.TransactionResponse> {
   if (!window.ethereum) throw new Error("MetaMask не встановлений");
   await window.ethereum.request({ method: "eth_requestAccounts" });
 
@@ -77,5 +79,9 @@ async function sendTransaction(txRequest: ethers.TransactionRequest): Promise<et
   }
 }
 
-export { createProjectTx, submitAchievementTx, verifySubmissionTx, sendTransaction };
-
+export {
+  createProjectTx,
+  submitAchievementTx,
+  verifySubmissionTx,
+  sendTransaction,
+};
