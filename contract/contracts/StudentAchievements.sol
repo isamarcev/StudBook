@@ -27,6 +27,7 @@ contract StudentAchievements is Ownable {
     }
 
     struct Submission {
+        uint256 id;
         address student;
         uint256 projectId;
         string description;
@@ -157,6 +158,7 @@ contract StudentAchievements is Ownable {
         uint256 newSubmissionId = _submissionIds.current();
 
         submissions[newSubmissionId] = Submission({
+            id: newSubmissionId,
             student: msg.sender,
             projectId: _projectId,
             status: SubmissionStatus.Waiting,
