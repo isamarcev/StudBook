@@ -44,11 +44,13 @@ async function submitAchievementTx(
 
 async function verifySubmissionTx(
   submissionId: number,
-  approve: boolean
+  approve: boolean,
+  verdict: string
 ): Promise<ethers.TransactionRequest> {
   const data = contractInterface.encodeFunctionData("verifySubmission", [
     submissionId,
     approve,
+    verdict,
   ]);
 
   return {

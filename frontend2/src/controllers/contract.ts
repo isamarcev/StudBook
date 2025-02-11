@@ -18,6 +18,26 @@ enum SubmissionStatus {
   Rejected,
 }
 
+// 🔹 Структура проекта (Project)
+export interface Project {
+  projectId: number;
+  name: string;
+  description: string;
+  creator: string;
+  deadline: number;
+  reward: number;
+}
+
+// 🔹 Структура заявки (Submission)
+interface Submission {
+  student: string;
+  projectId: number;
+  description: string;
+  status: SubmissionStatus;
+  verifier: string;
+  verdict: string;
+}
+
 // 🔹 1. Получить статус заявки по `submissionId`
 async function getSubmissionStatus(
   submissionId: number
@@ -57,18 +77,47 @@ async function getAllProjects(): Promise<number[]> {
   }
 }
 
-// 🔹 4. Получить проект по `projectId`
-async function getProject(projectId: number): Promise<any> {
+// 🔹 4. Получить данные проекта по `projectId`
+async function getProject(projectId: number): Promise<Project> {
   try {
-    const project = await contract.projects(projectId);
-    return project;
+    const projectData = await contract.projects(projectId);
+    console.log("projectData", projectData);
+    return {
+      projectId: projectData[0],
+      name: projectData[1],
+      description: projectData[2],
+      creator: projectData[3],
+      deadline: Number(projectData[4]),
+      reward: Number(projectData[5]),
+    };
   } catch (error) {
     console.error("Error getting project:", error);
     throw new Error("Failed to get project");
   }
 }
 
-// 🔹 5. Получить все заявки для конкретного проекта
+// 🔹 5. Получить доступные проекты для студента
+async function getAvailableProjects(student: string): Promise<Project[]> {
+  try {
+    const projectList = await contract.getAvailableProjects(student);
+    return projectList.map((projectData: any, index: number) => ({
+      projectId: index + 1, // В контракте индекс проекта
+      name: projectData[0],
+      description: projectData[1],
+      creator: projectData[2],
+      whitelist: projectData[3],
+      deadline: Number(projectData[4]),
+      verifiers: projectData[5],
+      reward: Number(projectData[6]),
+      submissions: projectData[7],
+    }));
+  } catch (error) {
+    console.error("Error getting available projects:", error);
+    throw new Error("Failed to get available projects");
+  }
+}
+
+// 🔹 6. Получить все заявки для конкретного проекта
 async function getProjectSubmissions(projectId: number): Promise<number[]> {
   try {
     const submissions: number[] = await contract.getProjectSubmissions(
@@ -81,12 +130,12 @@ async function getProjectSubmissions(projectId: number): Promise<number[]> {
   }
 }
 
-// 🔹 6. Получить все проекты, созданные конкретным инструктором
+// 🔹 7. Получить все проекты, созданные конкретным инструктором
 async function getInstructorProjects(
   instructorAddress: string
 ): Promise<number[]> {
   try {
-    const projects: number[] = await contract.instructorProjectIds(
+    const projects: number[] = await contract.getInstructorProjects(
       instructorAddress
     );
     return projects;
@@ -96,7 +145,7 @@ async function getInstructorProjects(
   }
 }
 
-// 🔹 7. Получить проекты, в которых `verifier` проверяет заявки
+// 🔹 8. Получить проекты, в которых `verifier` проверяет заявки
 async function getVerifierProjects(verifierAddress: string): Promise<number[]> {
   try {
     const projects: number[] = await contract.verifiers(verifierAddress);
@@ -107,18 +156,25 @@ async function getVerifierProjects(verifierAddress: string): Promise<number[]> {
   }
 }
 
-// 🔹 8. Получить данные по `submissionId`
-async function getSubmission(submissionId: number): Promise<any> {
+// 🔹 9. Получить данные по `submissionId`
+async function getSubmission(submissionId: number): Promise<Submission> {
   try {
-    const submission = await contract.submissions(submissionId);
-    return submission;
+    const submissionData = await contract.submissions(submissionId);
+    return {
+      student: submissionData[0],
+      projectId: Number(submissionData[1]),
+      description: submissionData[2],
+      status: Number(submissionData[3]),
+      verifier: submissionData[4],
+      verdict: submissionData[5],
+    };
   } catch (error) {
     console.error("Error getting submission:", error);
     throw new Error("Failed to get submission");
   }
 }
 
-// 🔹 9. Проверить, является ли пользователь инструктором
+// 🔹 10. Проверить, является ли пользователь инструктором
 async function checkIfInstructor(userAddress: string): Promise<boolean> {
   try {
     const isInstructor: boolean = await contract.isInstructor(userAddress);
@@ -135,6 +191,7 @@ export {
   getUserSubmissions,
   getAllProjects,
   getProject,
+  getAvailableProjects,
   getProjectSubmissions,
   getInstructorProjects,
   getVerifierProjects,

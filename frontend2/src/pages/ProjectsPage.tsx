@@ -54,10 +54,12 @@ const ProjectsPage: FC = () => {
                     ))}
                 </div>
 
-                {isInstructor ? <BottomButton title='Створити проект' onClick={() => {}}/> : null}
-            </div>
-        </Page>
-    )
-}
+        {isInstructor ? (
+          <BottomButton title="Створити проект" onClick={() => {}} />
+        ) : null}
+      </div>
+    </Page>
+  );
+};
 
-export default ProjectsPage
+export default ProjectsPage;
