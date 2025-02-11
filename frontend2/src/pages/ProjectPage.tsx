@@ -7,6 +7,7 @@ import Page from '../Page';
 import { useParams } from 'react-router-dom';
 import Submission from '../components/Submission';
 import { checkIfInstructor } from '../controllers/contract';
+import { useProject } from '../hooks/useProject';
 
 const projects = [
     {id: 1, name: "TEST"},
@@ -41,15 +42,27 @@ const ProjectPage: FC = () => {
         }
     }, [walletAddress])
 
-    const project = projects.find(project => project.id === Number(id));
+    // const project = projects.find(project => project.id === Number(id));
+
+    const project = useProject(Number(id));
 
     return (
         <Page>
             <div className='flex flex-col gap-4 text-start'>
                 <Header isInstructor={isInstructor}/>
                 <div className="flex flex-col bg-[#141519] p-4 gap-4 rounded-2xl min-w-[350px]">
-                    <h2>ID: <b>{project?.id}</b></h2>
-                    <h2>Назва проекту: <b>{project?.name}</b></h2>
+                    <h2>ID: <b>{project.project?.projectId}</b></h2>
+                    <h2>Назва проекту: <b>{project.project?.name}</b></h2>
+                    <h2>Опис: <b>{project.project?.description}</b></h2>
+                    <h2>Creator: <b>{project.project?.creator}</b></h2>
+                    <h2>Дедлайн: <b>{project.project?.deadline ? new Date(Number(project.project.deadline) * 1000).toLocaleDateString('uk-UA', { 
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    }) : ''}</b></h2>
+                    <h2>Винагорода: <b>{project.project?.reward}</b></h2>
                 </div>
                 <h2 className="text-2xl">Список заявок по проекту:</h2>
                 <div className="flex flex-col gap-4 p-2">
