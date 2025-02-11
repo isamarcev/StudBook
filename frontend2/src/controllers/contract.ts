@@ -54,12 +54,17 @@ async function getSubmissionStatus(
 }
 
 // 🔹 2. Получить все `submissionId` пользователя
-async function getUserSubmissions(userAddress: string): Promise<number[]> {
+async function getUserSubmissions(userAddress: string): Promise<Submission[]> {
   try {
-    const submissionIds: number[] = await contract.getUserSubmissions(
-      userAddress
-    );
-    return submissionIds;
+    const submissions = await contract.getUserSubmissions(userAddress);
+    return submissions.map((submissionData: any) => ({
+      student: submissionData[0],
+      projectId: Number(submissionData[1]),
+      description: submissionData[2],
+      status: Number(submissionData[3]),
+      verifier: submissionData[4],
+      verdict: submissionData[5],
+    }));
   } catch (error) {
     console.error("Error getting user submissions:", error);
     throw new Error("Failed to get user submissions");
