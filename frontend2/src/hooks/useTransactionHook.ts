@@ -4,12 +4,13 @@ import { createProjectTx, submitAchievementTx, verifySubmissionTx } from "../con
 interface UseTransactionResult {
   sendCreateProject: (
     name: string,
-    description: string,
+    reward: number,
     whitelist: string[],
     deadline: number,
     verifiers: string[],
-    reward: number
+    description?: string,
   ) => Promise<void>;
+  
 
   sendSubmitAchievement: (projectId: number, description: string) => Promise<void>;
 
@@ -27,19 +28,28 @@ export function useTransaction(): UseTransactionResult {
 
   async function sendCreateProject(
     name: string,
-    description: string,
+    reward: number,
     whitelist: string[],
     deadline: number,
     verifiers: string[],
-    reward: number
+    description?: string,
   ) {
+    console.log('Create Project Params:', {
+      name,
+      deadline,
+      reward,
+      whitelist,
+      verifiers,
+      description
+    });
     setLoading(true);
     setError(null);
     try {
-      const tx = await createProjectTx(name, description, whitelist, deadline, verifiers, reward);
+      const tx = await createProjectTx(name, deadline, reward, whitelist, verifiers, description);
       setTransactionHash(tx.hash);
       console.log("✅ Проект создан:", tx.hash);
     } catch (err) {
+      console.error(err)
       console.error("❌ Ошибка при создании проекта:", err);
       setError("Failed to create project");
     } finally {

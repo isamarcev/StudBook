@@ -6,11 +6,11 @@ const contractInterface = new ethers.Interface(config.contractAbi);
 
 async function createProjectTx(
   name: string,
-  description: string,
-  whitelist: string[],
   deadline: number,
-  verifiers: string[],
-  reward: number
+  reward: number,
+  whitelist: string[] = [],
+  verifiers: string[] = [],
+  description?: string,
 ): Promise<ethers.TransactionResponse> {
   const data = contractInterface.encodeFunctionData("createProject", [
     name,

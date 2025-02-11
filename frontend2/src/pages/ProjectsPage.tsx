@@ -6,6 +6,8 @@ import Header from '../components/Header';
 import Page from '../Page';
 import { useNavigate } from 'react-router-dom';
 import { checkIfInstructor, getInstructorProjects } from '../controllers/contract';
+import { useInstructor } from '../hooks/useInstructor';
+import { useAllProjects } from '../hooks/useAllProjects';
 
 const test_projects = [
   { id: 1, name: "TEST" },
@@ -19,38 +21,28 @@ const isInstructor = true;
 const ProjectsPage: FC = () => {
   const { walletAddress, connectWallet } = useWallet();
   const navigate = useNavigate();
-    const [isInstructor, setIsInstructor] = useState<boolean>(false);
-    const [projects, setProjects] = useState<any[]>([]);
+  const isInstructor = useInstructor();
+  const {projects, loading, error} = useAllProjects();
 
-  useEffect(() => {
-        if(walletAddress) {
-            checkIfInstructor("0x66989a799FC51d889F6df8F9c56eD2Cb3c48984D").then(result => {
-                setIsInstructor(result);
-                console.log("isInstructor", result);
-            })
-        }
-    }, [walletAddress])
-
-    // useEffect(() => {
-    //     setProjects(test_projects);
-    // }, [])
-
-    useEffect(() => {
-        if (walletAddress) {
-            getInstructorProjects(walletAddress).then(result => {
-                setProjects(result);
-            })
-        }
-    }, [walletAddress])
 
     return (
         <Page>
             <div className='flex flex-col gap-4 '>
                 <Header isInstructor={isInstructor}/>
-                <h1>Projects</h1>
+                <h1 className='text-3xl'>Проекти:</h1>
                 <div className="flex flex-col gap-4">
                     {projects.map(project => (
-                        <Project key={project.id} id={project.id} name={project.name} isInstructor={isInstructor} onClick={() => {navigate(`/project/${project.id}`)}}/>
+                        <Project key={project.projectId} 
+                        id={project.projectId} 
+                        name={project.name} 
+                        isInstructor={isInstructor} 
+                        description={project.description}
+                        onClick=
+                        {
+                          isInstructor ?
+                          () => {navigate(`/project/${project.projectId}`)}
+                          : () => {navigate(`/apply/${project.projectId}`)}
+                        }/>
                     ))}
                 </div>
 
