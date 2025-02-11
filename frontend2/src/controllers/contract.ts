@@ -133,9 +133,9 @@ async function getProjectSubmissions(projectId: number): Promise<number[]> {
 // 🔹 7. Получить все проекты, созданные конкретным инструктором
 async function getInstructorProjects(
   instructorAddress: string
-): Promise<number[]> {
+): Promise<Project[]> {
   try {
-    const projects: number[] = await contract.getInstructorProjects(
+    const projects: Project[] = await contract.getInstructorProjects(
       instructorAddress
     );
     return projects;
