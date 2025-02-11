@@ -5,13 +5,13 @@ import { useInstructor } from "../hooks/useInstructor";
 import { useForm } from "react-hook-form";
 import { useTransaction } from "../hooks/useTransactionHook";
 import LoadingPopup from "../components/LoadingPopup";
+import { useNavigate } from "react-router-dom";
 
 const CreateProjectPage: FC = () => {
   const isInstructor = useInstructor();
   const { register, handleSubmit } = useForm();
   const transactions = useTransaction();
-
-  use;
+  const navigate = useNavigate();
 
   return (
     <Page>
@@ -39,7 +39,12 @@ const CreateProjectPage: FC = () => {
                 : data.verifiersAddresses.split("\n"),
 
               data.description
-            );
+            ).then((tx) => {
+                console.log(tx);
+                navigate("/");
+            }).catch((e) => {
+                console.log(e);
+            });
           })}
         >
           <div className="flex flex-col gap-4 p-2">
