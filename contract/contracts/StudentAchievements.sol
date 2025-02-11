@@ -238,7 +238,6 @@ contract StudentAchievements is Ownable {
     function getInstructorProjects(address _instructor)
         external
         view
-        onlyInstructor
         returns (Project[] memory)
     {
         uint256[] memory _instructorProjectIds = instructorProjectIds[
@@ -261,7 +260,7 @@ contract StudentAchievements is Ownable {
 
     function getProjectSubmissions(
         uint256 _projectId
-    ) external view onlyInstructor returns (Submission[] memory) {
+    ) external view returns (Submission[] memory) {
         uint256[] memory projectSubmissionIds = projects[_projectId]
             .submissions;
         Submission[] memory projectSubmissions = new Submission[](
