@@ -29,7 +29,7 @@ export interface Project {
 }
 
 // 🔹 Структура заявки (Submission)
-interface Submission {
+export interface Submission {
   student: string;
   projectId: number;
   description: string;
@@ -118,17 +118,24 @@ async function getAvailableProjects(student: string): Promise<Project[]> {
 }
 
 // 🔹 6. Получить все заявки для конкретного проекта
-async function getProjectSubmissions(projectId: number): Promise<number[]> {
+async function getProjectSubmissions(projectId: number): Promise<Submission[]> {
   try {
-    const submissions: number[] = await contract.getProjectSubmissions(
-      projectId
-    );
-    return submissions;
+    const submissions = await contract.getProjectSubmissions(projectId);
+
+    return submissions.map((submissionData: any) => ({
+      student: submissionData[0],
+      projectId: Number(submissionData[1]),
+      description: submissionData[2],
+      status: Number(submissionData[3]),
+      verifier: submissionData[4],
+      verdict: submissionData[5],
+    }));
   } catch (error) {
     console.error("Error getting project submissions:", error);
     throw new Error("Failed to get project submissions");
   }
 }
+
 
 // 🔹 7. Получить все проекты, созданные конкретным инструктором
 async function getInstructorProjects(
