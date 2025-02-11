@@ -30,6 +30,7 @@ export interface Project {
 
 // 🔹 Структура заявки (Submission)
 export interface Submission {
+  id: number;
   student: string;
   projectId: number;
   description: string;
@@ -58,12 +59,13 @@ async function getUserSubmissions(userAddress: string): Promise<Submission[]> {
   try {
     const submissions = await contract.getUserSubmissions(userAddress);
     return submissions.map((submissionData: any) => ({
-      student: submissionData[0],
-      projectId: Number(submissionData[1]),
-      description: submissionData[2],
-      status: Number(submissionData[3]),
-      verifier: submissionData[4],
-      verdict: submissionData[5],
+      id: Number(submissionData[0]),
+      student: submissionData[1],
+      projectId: Number(submissionData[2]),
+      description: submissionData[3],
+      status: Number(submissionData[4]),
+      verifier: submissionData[5],
+      verdict: submissionData[6],
     }));
   } catch (error) {
     console.error("Error getting user submissions:", error);
@@ -128,12 +130,13 @@ async function getProjectSubmissions(projectId: number): Promise<Submission[]> {
     const submissions = await contract.getProjectSubmissions(projectId);
 
     return submissions.map((submissionData: any) => ({
-      student: submissionData[0],
-      projectId: Number(submissionData[1]),
-      description: submissionData[2],
-      status: Number(submissionData[3]),
-      verifier: submissionData[4],
-      verdict: submissionData[5],
+      id: Number(submissionData[0]),
+      student: submissionData[1],
+      projectId: Number(submissionData[2]),
+      description: submissionData[3],
+      status: Number(submissionData[4]),
+      verifier: submissionData[5],
+      verdict: submissionData[6],
     }));
   } catch (error) {
     console.error("Error getting project submissions:", error);
@@ -173,12 +176,13 @@ async function getSubmission(submissionId: number): Promise<Submission> {
   try {
     const submissionData = await contract.submissions(submissionId);
     return {
-      student: submissionData[0],
-      projectId: Number(submissionData[1]),
-      description: submissionData[2],
-      status: Number(submissionData[3]),
-      verifier: submissionData[4],
-      verdict: submissionData[5],
+      id: Number(submissionData[0]),
+      student: submissionData[1],
+      projectId: Number(submissionData[2]),
+      description: submissionData[3],
+      status: Number(submissionData[4]),
+      verifier: submissionData[5],
+      verdict: submissionData[6],
     };
   } catch (error) {
     console.error("Error getting submission:", error);
