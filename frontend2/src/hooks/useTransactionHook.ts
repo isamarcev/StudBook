@@ -48,6 +48,8 @@ export function useTransaction(): UseTransactionResult {
       const tx = await createProjectTx(name, deadline, reward, whitelist, verifiers, description);
       setTransactionHash(tx.hash);
       console.log("✅ Проект создан:", tx.hash);
+      setLoading(false);
+      return tx;
     } catch (err) {
       console.error(err)
       console.error("❌ Ошибка при создании проекта:", err);

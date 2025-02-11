@@ -4,7 +4,7 @@ import Project from '../components/Project';
 import BottomButton from '../components/BottomButtom';
 import Header from '../components/Header';
 import Page from '../Page';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Submission from '../components/Submission';
 import { checkIfInstructor } from '../controllers/contract';
 import { useInstructor } from '../hooks/useInstructor';
@@ -34,6 +34,7 @@ const CreateProjectPage: FC = () => {
     const isInstructor = useInstructor();
     const {register, handleSubmit, control} = useForm();
     const transactions = useTransaction();
+    const navigate = useNavigate();
 
     use
 
@@ -46,14 +47,22 @@ const CreateProjectPage: FC = () => {
                 <Header isInstructor={isInstructor}/>
                 <h2 className="text-2xl">Створити проект:</h2>
                 <form action="" className="flex flex-col gap-4 p-2" onSubmit={handleSubmit((data) => {
-                    transactions.sendCreateProject(
+                    const tx = transactions.sendCreateProject(
                         data.name,
                         data.reward,
                         data.studentsAddresses.split('\n'),
                         Math.floor(Date.parse(data.deadline) / 1000),
                         data.verifiersAddresses.split('\n'),
                         data.description,
-                    )
+                    ).then(tx => {
+                        console.log('tx', tx)
+                        navigate('/')
+                        return tx
+                    }).catch(err => {
+                        console.log('err', err)
+                        return null
+                    })
+                        
                 })}>
                     <div className="flex flex-col gap-4 p-2">
                         <label htmlFor="name">Назва проекту *</label>
