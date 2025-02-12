@@ -4,6 +4,7 @@ import {
   submitAchievementTx,
   verifySubmissionTx,
 } from "../controllers/transaction";
+import { TransactionResponse } from "ethers";
 
 interface UseTransactionResult {
   sendCreateProject: (
@@ -13,7 +14,7 @@ interface UseTransactionResult {
     deadline: number,
     verifiers: string[],
     description?: string
-  ) => Promise<void>;
+  ) => Promise<TransactionResponse | undefined>;
 
   sendSubmitAchievement: (
     projectId: number,
