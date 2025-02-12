@@ -11,23 +11,7 @@ import { useInstructor } from '../hooks/useInstructor';
 import { useForm } from 'react-hook-form';
 import { useTransaction } from '../hooks/useTransactionHook';
 import LoadingPopup from '../components/LoadingPopup';
-
-
-const projects = [
-    {id: 1, name: "TEST"},
-    {id: 2, name: "TEST2"},
-    {id: 3, name: "TEST3"},
-    {id: 4, name: "TEST4"},
-]
-
-const submissions = [
-    {student: 1, description: "TEST", status: "approved"},
-    {student: 2, description: "TEST2", status: "rejected"},
-    {student: 3, description: "TEST3"},
-    {student: 4, description: "TEST4"},
-]
-
-// const isInstructor = true;
+import { useProject } from '../hooks/useProject';
 
 const ApplyPage: FC = () => {
     
@@ -40,8 +24,7 @@ const ApplyPage: FC = () => {
     const transactions = useTransaction();
     const navigate = useNavigate();
 
-
-    const project = projects.find(project => project.id === Number(id));
+    const project = useProject(Number(id));
 
     return (
         <Page>
@@ -49,8 +32,18 @@ const ApplyPage: FC = () => {
             <div className='flex flex-col gap-4 text-start'>
                 <Header isInstructor={isInstructor}/>
                 <div className="flex flex-col bg-[#141519] p-4 gap-4 rounded-2xl min-w-[350px]">
-                    <h2>ID: <b>{project?.id}</b></h2>
-                    <h2>Назва проекту: <b>{project?.name}</b></h2>
+                    <h2>ID: <b>{project.project?.projectId}</b></h2>
+                    <h2>Назва проекту: <b>{project.project?.name}</b></h2>
+                    <h2>Опис: <b>{project.project?.description}</b></h2>
+                    <h2>Creator: <b>{project.project?.creator}</b></h2>
+                    <h2>Дедлайн: <b>{project.project?.deadline ? new Date(Number(project.project.deadline) * 1000).toLocaleDateString('uk-UA', { 
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    }) : ''}</b></h2>
+                    <h2>Винагорода: <b>{project.project?.reward}</b></h2>
                 </div>
                 <h2 className="text-2xl">Подати заявку:</h2>
                 <form action="" className="flex flex-col gap-4 p-2" onSubmit={handleSubmit((data) => {transactions.sendSubmitAchievement(id, data.description).then((tx) => {

@@ -8,6 +8,10 @@ import { useParams } from 'react-router-dom';
 import Submission from '../components/Submission';
 import { checkIfInstructor } from '../controllers/contract';
 import { useProject } from '../hooks/useProject';
+import { useProjectSubmissions } from '../hooks/useGetProjectSubmissions';
+import LoadingPopup from '../components/LoadingPopup';
+import { useTransaction } from '../hooks/useTransactionHook';
+import { useForm } from 'react-hook-form';
 
 const projects = [
     {id: 1, name: "TEST"},
@@ -31,7 +35,8 @@ const ProjectPage: FC = () => {
     const { id } = useParams();
 
     const [isInstructor, setIsInstructor] = useState<boolean>(false);
-    const [submissions, setSubmissions] = useState<any[]>([]);
+
+    const verdictForm = useForm();
 
     useEffect(() => {
         if(walletAddress) {
@@ -42,12 +47,49 @@ const ProjectPage: FC = () => {
         }
     }, [walletAddress])
 
-    // const project = projects.find(project => project.id === Number(id));
-
     const project = useProject(Number(id));
+    const submissions = useProjectSubmissions(Number(id));
+    
+    const [showVerdictPopup, setShowVerdictPopup] = useState<boolean>(false);
+    const [verdictType, setVerdictType] = useState<boolean>(true);
+    const [selectedSubmissionId, setSelectedSubmissionId] = useState<number>(0);
+
+    const transactions = useTransaction();
 
     return (
         <Page>
+            <LoadingPopup
+                text={"Підтвердіть транзакцію в гаманці"}
+                isLoading={transactions.loading}
+            ></LoadingPopup>
+
+            {showVerdictPopup && (
+                <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 flex justify-center items-center" onClick={() => setShowVerdictPopup(false)}>
+                    <div className="bg-[#141519] p-4 rounded-2xl relative" onClick={(e) => e.stopPropagation()}>
+                        <button 
+                            className="absolute top-2 right-2 text-white hover:text-gray-300"
+                            onClick={() => setShowVerdictPopup(false)}
+                        >
+                            ✕
+                        </button>
+                        <form action="" className="flex flex-col gap-4 p-2" onSubmit={verdictForm.handleSubmit((data) => {
+                            setShowVerdictPopup(false);
+                            transactions.sendVerifySubmission(selectedSubmissionId, verdictType, data.verdict).then((tx) => {
+                                console.log(tx);
+                            }).catch((e) => {
+                                console.log(e);
+                            });
+                        })}>
+                            <div className="flex flex-col gap-4 p-2">
+                                <label htmlFor="verdict">Введіть вердикт:</label>
+                                <textarea id="verdict" cols={30} rows={5} className="bg-[#070707] text-white p-2 rounded-lg outline-none" {...verdictForm.register("verdict")}></textarea>
+                            </div>
+                            <button type="submit" className="bg-[#FFFFFF] text-black p-1 rounded-3xl hover:cursor-pointer" >Підтвердити</button>
+                        </form>
+                    </div>
+                </div>
+            )}
+            
             <div className='flex flex-col gap-4 text-start'>
                 <Header isInstructor={isInstructor}/>
                 <div className="flex flex-col bg-[#141519] p-4 gap-4 rounded-2xl min-w-[350px]">
@@ -66,8 +108,25 @@ const ProjectPage: FC = () => {
                 </div>
                 <h2 className="text-2xl">Список заявок по проекту:</h2>
                 <div className="flex flex-col gap-4 p-2">
-                    {submissions.map(submission => (
-                        <Submission key={submission.student} student={submission.student} description={submission.description} status={submission.status || ""}/>
+                    {submissions.submissions.map(submission => (
+                        <Submission 
+                            key={submission.id} 
+                            student={submission.student} 
+                            description={submission.description}
+                            status={submission.status}
+                            verdict={submission.verdict}
+                            isStudent={!isInstructor}
+                            onApprove={() => {
+                                setShowVerdictPopup(true);
+                                setVerdictType(true);
+                                setSelectedSubmissionId(submission.id);
+                            }}
+                            onDecline={() => {
+                                setShowVerdictPopup(true);
+                                setVerdictType(false);
+                                setSelectedSubmissionId(submission.id);
+                            }}
+                        />
                     ))}
                 
                 </div>

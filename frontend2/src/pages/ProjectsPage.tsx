@@ -14,7 +14,7 @@ const ProjectsPage: FC = () => {
 
   return (
     <Page>
-      <div className="flex flex-col gap-4 ">
+      <div className="flex flex-col gap-4 items-center">
         <Header isInstructor={isInstructor} />
         <h1 className="text-3xl">Проекти:</h1>
         <div className="flex flex-col gap-4">

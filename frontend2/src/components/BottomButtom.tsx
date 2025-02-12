@@ -7,7 +7,7 @@ interface BottomButtonProps {
 
 const BottomButton: FC<BottomButtonProps> = ({ title, onClick }) => {
     return (
-        <div className="w-100 p-4 text-black bg-white rounded-lg text-center text-lg font-medium hover:cursor-pointer" onClick={onClick}>
+        <div className="sticky bottom-[15px] w-100 p-4 text-black bg-white rounded-lg text-center text-lg font-medium hover:cursor-pointer" onClick={onClick}>
             {title}
         </div>
     )
