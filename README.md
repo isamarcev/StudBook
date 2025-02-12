@@ -19,6 +19,10 @@ A decentralized platform that allows students to submit their achievements and h
 
 ---
 
+## Video demo
+
+[![Watch the video](https://img.youtube.com/vi/1Qwv6Z6Q5ZU/maxresdefault.jpg)](https://youtu.be/f0jSG910eS0)
+
 ## Overview
 
 Traditional student projects and educational programs often face challenges such as:
@@ -68,7 +72,7 @@ By using blockchain, our platform provides an automated, transparent, and secure
 ## Smart Contract
 
 - **Deployed Network:** Sepolia Test Network
-- **Contract Address:** `0x1234567890abcdef1234567890abcdef12345678`
+- **Contract Address:** `0x2200a7304a1a432c994fafd218ddf76837ae63a8`
 
 > **Note:** Replace the above address with the actual deployed contract address if it changes.
 
