@@ -7,7 +7,9 @@ interface UseProjectSubmissionsResult {
   error: string | null;
 }
 
-export function useProjectSubmissions(projectId: number): UseProjectSubmissionsResult {
+export function useProjectSubmissions(
+  projectId: number
+): UseProjectSubmissionsResult {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -18,10 +20,10 @@ export function useProjectSubmissions(projectId: number): UseProjectSubmissionsR
         if (projectId) {
           const projectSubmissions = await getProjectSubmissions(projectId);
           setSubmissions(projectSubmissions);
-          console.log("📦 Заявки загружены:", projectSubmissions);
+          console.log("Submissions:", projectSubmissions);
         }
       } catch (err) {
-        console.error("❌ Ошибка загрузки заявок:", err);
+        console.error("Error loading project submissions:", err);
         setError("Failed to load project submissions");
       } finally {
         setLoading(false);

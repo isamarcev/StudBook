@@ -22,10 +22,10 @@ export function useUserSubmissions(): UseUserSubmissionsResult {
         if (walletAddress) {
           const userSubmissions = await getUserSubmissions(walletAddress);
           setSubmissions(userSubmissions);
-          console.log("📦 Заявки пользователя загружены:", userSubmissions);
+          console.log("User submissions:", userSubmissions);
         }
       } catch (err) {
-        console.error("❌ Ошибка загрузки заявок пользователя:", err);
+        console.error("Error loading user submissions:", err);
         setError("Failed to load user submissions");
       } finally {
         setLoading(false);

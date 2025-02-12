@@ -4,21 +4,18 @@ import { config } from "../config"; // Импортируем конфиг
 
 const provider = new ethers.JsonRpcProvider(config.rpcUrl);
 
-// Создаём экземпляр контракта
 const contract = new ethers.Contract(
   config.contractAddress,
   config.contractAbi,
   provider
 );
 
-// 🔹 Enum статусов заявки
 enum SubmissionStatus {
   Waiting = 0,
   Approved,
   Rejected,
 }
 
-// 🔹 Структура проекта (Project)
 export interface Project {
   projectId: number;
   name: string;
@@ -28,7 +25,6 @@ export interface Project {
   reward: number;
 }
 
-// 🔹 Структура заявки (Submission)
 export interface Submission {
   id: number;
   student: string;
@@ -39,7 +35,6 @@ export interface Submission {
   verdict: string;
 }
 
-// 🔹 1. Получить статус заявки по `submissionId`
 async function getSubmissionStatus(
   submissionId: number
 ): Promise<SubmissionStatus> {
@@ -54,7 +49,6 @@ async function getSubmissionStatus(
   }
 }
 
-// 🔹 2. Получить все `submissionId` пользователя
 async function getUserSubmissions(userAddress: string): Promise<Submission[]> {
   try {
     const submissions = await contract.getUserSubmissions(userAddress);
@@ -73,7 +67,6 @@ async function getUserSubmissions(userAddress: string): Promise<Submission[]> {
   }
 }
 
-// 🔹 3. Получить все проекты (список `projectId`)
 async function getAllProjects(): Promise<number[]> {
   try {
     const projects: number[] = await contract.getAllProjects();
@@ -84,7 +77,6 @@ async function getAllProjects(): Promise<number[]> {
   }
 }
 
-// 🔹 4. Получить данные проекта по `projectId`
 async function getProject(projectId: number): Promise<Project> {
   try {
     const projectData = await contract.projects(projectId);
@@ -103,12 +95,11 @@ async function getProject(projectId: number): Promise<Project> {
   }
 }
 
-// 🔹 5. Получить доступные проекты для студента
 async function getAvailableProjects(student: string): Promise<Project[]> {
   try {
     const projectList = await contract.getAvailableProjects(student);
     return projectList.map((projectData: any, index: number) => ({
-      projectId: index + 1, // В контракте индекс проекта
+      projectId: index + 1,
       name: projectData[0],
       description: projectData[1],
       creator: projectData[2],
@@ -124,7 +115,6 @@ async function getAvailableProjects(student: string): Promise<Project[]> {
   }
 }
 
-// 🔹 6. Получить все заявки для конкретного проекта
 async function getProjectSubmissions(projectId: number): Promise<Submission[]> {
   try {
     const submissions = await contract.getProjectSubmissions(projectId);
@@ -144,8 +134,6 @@ async function getProjectSubmissions(projectId: number): Promise<Submission[]> {
   }
 }
 
-
-// 🔹 7. Получить все проекты, созданные конкретным инструктором
 async function getInstructorProjects(
   instructorAddress: string
 ): Promise<Project[]> {
@@ -160,7 +148,6 @@ async function getInstructorProjects(
   }
 }
 
-// 🔹 8. Получить проекты, в которых `verifier` проверяет заявки
 async function getVerifierProjects(verifierAddress: string): Promise<number[]> {
   try {
     const projects: number[] = await contract.verifiers(verifierAddress);
@@ -171,7 +158,6 @@ async function getVerifierProjects(verifierAddress: string): Promise<number[]> {
   }
 }
 
-// 🔹 9. Получить данные по `submissionId`
 async function getSubmission(submissionId: number): Promise<Submission> {
   try {
     const submissionData = await contract.submissions(submissionId);
@@ -190,7 +176,6 @@ async function getSubmission(submissionId: number): Promise<Submission> {
   }
 }
 
-// 🔹 10. Проверить, является ли пользователь инструктором
 async function checkIfInstructor(userAddress: string): Promise<boolean> {
   try {
     const isInstructor: boolean = await contract.isInstructor(userAddress);
@@ -201,7 +186,6 @@ async function checkIfInstructor(userAddress: string): Promise<boolean> {
   }
 }
 
-// ✅ Экспортируем функции
 export {
   getSubmissionStatus,
   getUserSubmissions,

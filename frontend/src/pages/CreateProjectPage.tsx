@@ -1,4 +1,4 @@
-import { FC, use } from "react";
+import { FC } from "react";
 import Header from "../components/Header";
 import Page from "../Page";
 import { useInstructor } from "../hooks/useInstructor";
@@ -26,25 +26,28 @@ const CreateProjectPage: FC = () => {
           action=""
           className="flex flex-col gap-4 p-2"
           onSubmit={handleSubmit((data) => {
-            transactions.sendCreateProject(
-              data.name,
-              data.reward,
-              data.studentsAddresses == ""
-                ? []
-                : data.studentsAddresses.split("\n"),
+            transactions
+              .sendCreateProject(
+                data.name,
+                data.reward,
+                data.studentsAddresses == ""
+                  ? []
+                  : data.studentsAddresses.split("\n"),
 
-              Math.floor(Date.parse(data.deadline) / 1000),
-              data.verifiersAddresses == ""
-                ? []
-                : data.verifiersAddresses.split("\n"),
+                Math.floor(Date.parse(data.deadline) / 1000),
+                data.verifiersAddresses == ""
+                  ? []
+                  : data.verifiersAddresses.split("\n"),
 
-              data.description
-            ).then((tx) => {
+                data.description
+              )
+              .then((tx) => {
                 console.log(tx);
                 navigate("/");
-            }).catch((e) => {
+              })
+              .catch((e) => {
                 console.log(e);
-            });
+              });
           })}
         >
           <div className="flex flex-col gap-4 p-2">

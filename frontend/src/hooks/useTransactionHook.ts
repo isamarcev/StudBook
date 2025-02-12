@@ -1,5 +1,9 @@
 import { useState } from "react";
-import { createProjectTx, submitAchievementTx, verifySubmissionTx } from "../controllers/transaction";
+import {
+  createProjectTx,
+  submitAchievementTx,
+  verifySubmissionTx,
+} from "../controllers/transaction";
 
 interface UseTransactionResult {
   sendCreateProject: (
@@ -8,13 +12,19 @@ interface UseTransactionResult {
     whitelist: string[],
     deadline: number,
     verifiers: string[],
-    description?: string,
+    description?: string
   ) => Promise<void>;
-  
 
-  sendSubmitAchievement: (projectId: number, description: string) => Promise<void>;
+  sendSubmitAchievement: (
+    projectId: number,
+    description: string
+  ) => Promise<void>;
 
-  sendVerifySubmission: (submissionId: number, approve: boolean, verdict: string) => Promise<void>;
+  sendVerifySubmission: (
+    submissionId: number,
+    approve: boolean,
+    verdict: string
+  ) => Promise<void>;
 
   transactionHash: string | null;
   loading: boolean;
@@ -32,27 +42,34 @@ export function useTransaction(): UseTransactionResult {
     whitelist: string[],
     deadline: number,
     verifiers: string[],
-    description?: string,
+    description?: string
   ) {
-    console.log('Create Project Params:', {
+    console.log("Create Project Params:", {
       name,
       deadline,
       reward,
       whitelist,
       verifiers,
-      description
+      description,
     });
     setLoading(true);
     setError(null);
     try {
-      const tx = await createProjectTx(name, deadline, reward, whitelist, verifiers, description);
+      const tx = await createProjectTx(
+        name,
+        deadline,
+        reward,
+        whitelist,
+        verifiers,
+        description
+      );
       setTransactionHash(tx.hash);
-      console.log("✅ Проект создан:", tx.hash);
+      console.log("Project created:", tx.hash);
       setLoading(false);
       return tx;
     } catch (err) {
-      console.error(err)
-      console.error("❌ Ошибка при создании проекта:", err);
+      console.error(err);
+      console.error("Error:", err);
       setError("Failed to create project");
     } finally {
       setLoading(false);
@@ -65,24 +82,28 @@ export function useTransaction(): UseTransactionResult {
     try {
       const tx = await submitAchievementTx(projectId, description);
       setTransactionHash(tx.hash);
-      console.log("✅ Заявка отправлена:", tx.hash);
+      console.log("Achievement submitted:", tx.hash);
     } catch (err) {
-      console.error("❌ Ошибка при отправке заявки:", err);
+      console.error("Error:", err);
       setError("Failed to submit achievement");
     } finally {
       setLoading(false);
     }
   }
 
-  async function sendVerifySubmission(submissionId: number, approve: boolean, verdict: string) {
+  async function sendVerifySubmission(
+    submissionId: number,
+    approve: boolean,
+    verdict: string
+  ) {
     setLoading(true);
     setError(null);
     try {
       const tx = await verifySubmissionTx(submissionId, approve, verdict);
       setTransactionHash(tx.hash);
-      console.log("✅ Заявка верифицирована:", tx.hash);
+      console.log("Verification successful:", tx.hash);
     } catch (err) {
-      console.error("❌ Ошибка при верификации заявки:", err);
+      console.error("Error:", err);
       setError("Failed to verify submission");
     } finally {
       setLoading(false);
