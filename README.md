@@ -4,6 +4,10 @@
 
 A decentralized platform that allows students to submit their achievements and have them verified by instructors or independent experts. The system leverages blockchain technology to ensure transparency, fairness, and tamper-proof record-keeping of student accomplishments.
 
+🔗 **Live Demo:** [studchain.vercel.app](https://studchain.vercel.app/)
+
+🔗 **Video Demo:** [Watch the video](https://youtu.be/f0jSG910eS0)
+
 ---
 
 ## Table of Contents
@@ -18,10 +22,6 @@ A decentralized platform that allows students to submit their achievements and h
 - [License](#license)
 
 ---
-
-## Video demo
-
-[![Watch the video](https://i.ibb.co/sdcMcXs4/Frame-2087326291.png)](https://youtu.be/f0jSG910eS0)
 
 ## Overview
 
