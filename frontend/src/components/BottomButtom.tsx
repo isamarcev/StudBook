@@ -1,15 +1,18 @@
-import React, { FC } from 'react'
+import { FC } from "react";
 
 interface BottomButtonProps {
-    title: string;
-    onClick: () => void;
+  title: string;
+  onClick: () => void;
 }
 
 const BottomButton: FC<BottomButtonProps> = ({ title, onClick }) => {
-    return (
-        <div className="sticky bottom-[15px] w-100 p-4 text-black bg-white rounded-lg text-center text-lg font-medium hover:cursor-pointer" onClick={onClick}>
-            {title}
-        </div>
-    )
-}
-export default BottomButton
+  return (
+    <div
+      className="sticky bottom-[15px] w-100 p-4 text-black bg-white rounded-lg text-center text-lg font-medium hover:cursor-pointer"
+      onClick={onClick}
+    >
+      {title}
+    </div>
+  );
+};
+export default BottomButton;

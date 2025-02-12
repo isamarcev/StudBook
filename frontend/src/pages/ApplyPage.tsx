@@ -1,5 +1,4 @@
 import { FC } from "react";
-import { useWallet } from "../hooks/useWallet";
 import Header from "../components/Header";
 import Page from "../Page";
 import { useNavigate, useParams } from "react-router-dom";
@@ -10,7 +9,6 @@ import LoadingPopup from "../components/LoadingPopup";
 import { useProject } from "../hooks/useProject";
 
 const ApplyPage: FC = () => {
-  const { walletAddress, connectWallet } = useWallet();
   const { id } = useParams();
 
   const isInstructor = useInstructor();
@@ -67,8 +65,8 @@ const ApplyPage: FC = () => {
           className="flex flex-col gap-4 p-2"
           onSubmit={handleSubmit((data) => {
             transactions
-              .sendSubmitAchievement(id, data.description)
-              .then((tx) => {
+              .sendSubmitAchievement(Number(id), data.description)
+              .then((_) => {
                 navigate("/");
               });
           })}
