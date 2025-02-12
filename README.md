@@ -21,7 +21,7 @@ A decentralized platform that allows students to submit their achievements and h
 
 ## Video demo
 
-[![Watch the video](https://img.youtube.com/vi/1Qwv6Z6Q5ZU/maxresdefault.jpg)](https://youtu.be/f0jSG910eS0)
+[![Watch the video](https://i.ibb.co/sdcMcXs4/Frame-2087326291.png)](https://youtu.be/f0jSG910eS0)
 
 ## Overview
 
